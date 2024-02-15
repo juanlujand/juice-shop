@@ -43,7 +43,7 @@ jobs:
         # Change ${{ github.repository }} variable by another image name if you want but don't forget changing also image-tag above
         image-tag: ${{ github.repository }}:latest
         # API token for Sysdig Scanning auth
-        sysdig-secure-token: ${{ secrets.e04df36d-1ac5-46f5-bfaf-b84b6119d7dd}}
+        sysdig-secure-token: ${{ secrets.SYSDIG_TOKEN}}
         # Sysdig secure endpoint. Please read: https://docs.sysdig.com/en/docs/administration/saas-regions-and-ip-ranges/
         # US-East https://secure.sysdig.com
         # US-West https://us2.app.sysdig.com
