@@ -1,22 +1,21 @@
 - name: Terrascan IaC scanner
   uses: tenable/terrascan-action@v1.4.1
   on: [push]
-      
-      jobs:
+  jobs:
          terrascan_job:
          runs-on: ubuntu-latest
          name: terrascan-action
-           steps:
+         steps:
                - name: Checkout repository
                  uses: actions/checkout@v2
                - name: Run Terrascan
                  id: terrascan
                  uses: accurics/terrascan-action@main
-                   with:
-                     iac_type: 'terraform'
-                     iac_version: 'v14'
-                     policy_type: 'aws'
-                     only_warn: true
+                 with:
+                  iac_type: 'terraform'
+                  iac_version: 'v14'
+                  policy_type: 'aws'
+                   only_warn: true
         #scm_token: ${{ secrets.ACCESS_TOKEN }}
         #verbose: true
         #sarif_upload: true
