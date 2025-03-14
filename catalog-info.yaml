@@ -1,0 +1,13 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: my-juice-shop
+  description: On purpose vulnerable app for testing and comparisson with diferent capabilities and tools for benchmarking
+  annotations:
+    github.com/juanlujand: juanlujand/juice-shop
+    backstage.io/techdocs-ref: dir:.
+    sonarqube.org/juanlujand_juice-shop: juanlujand_juanlujand_juice-shop  # SonarQube project key
+spec:
+  type: service
+  owner: juanlujand
+  lifecycle: test
