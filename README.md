@@ -2,6 +2,8 @@
 
 [![Code scanning](https://github.com/juanlujand/juice-shop/actions/workflows/codeql.yml/badge.svg)](https://github.com/juanlujand/juice-shop/actions/workflows/codeql.yml)
 
+[![SonarQube Cloud](https://sonarcloud.io/images/project_badges/sonarcloud-light.svg)](https://sonarcloud.io/summary/new_code?id=juanlujand_juice-shop)
+
 
 [![OWASP Flagship](https://img.shields.io/badge/owasp-flagship%20project-48A646.svg)](https://owasp.org/projects/#sec-flagships)
 [![GitHub release](https://img.shields.io/github/release/juice-shop/juice-shop.svg)](https://github.com/juice-shop/juice-shop/releases/latest)
