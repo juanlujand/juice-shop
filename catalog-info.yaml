@@ -10,4 +10,4 @@ metadata:
 spec:
   type: service
   owner: juanlujand
-  lifecycle: test
+  lifecycle: Development
