@@ -1,0 +1,314 @@
+# Juice Shop Input Validation Specification
+# This document defines input validation requirements and implementation guidelines
+
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-03-23"
+  application: "Juice Shop"
+
+validation_principles:
+  primary_rules:
+    - "Allow-list only (no deny-list)"
+    - "Server-side validation required"
+    - "Client-side validation optional (UX only)"
+    - "Validate early, reject early"
+    - "Normalize input before validation"
+    - "Sanitize output for context"
+
+  security_approach:
+    - "Zero trust input model"
+    - "Context-aware validation"
+    - "Length limits enforced"
+    - "Character sets controlled"
+    - "Data type verification"
+    - "Business rule validation"
+
+input_categories:
+  user_inputs:
+    form_fields:
+      username:
+        type: "string"
+        min_length: 3
+        max_length: 30
+        pattern: "^[a-zA-Z0-9_]+$"
+        allowed_chars: "alphanumeric_underscore"
+        forbidden_patterns:
+          - "<script"
+          - "javascript:"
+          - "data:"
+        normalization: "trim_lowercase"
+
+      email:
+        type: "email"
+        max_length: 254
+        pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+        dns_validation: true
+        disposable_check: false
+        normalization: "trim_lowercase"
+
+      password:
+        type: "password"
+        min_length: 12
+        max_length: 128
+        complexity:
+          uppercase: 1
+          lowercase: 1
+          numbers: 1
+          special: 1
+        forbidden_patterns:
+          - "common_passwords"
+          - "sequential_chars"
+          - "user_info"
+
+      search_query:
+        type: "string"
+        min_length: 1
+        max_length: 100
+        allowed_chars: "alphanumeric_space_punctuation"
+        forbidden_patterns:
+          - "<script"
+          - "javascript:"
+          - "data:"
+        normalization: "trim_sanitize"
+
+  api_inputs:
+    parameters:
+      id:
+        type: "integer"
+        min_value: 1
+        max_value: 2147483647
+        format: "int32"
+
+      uuid:
+        type: "uuid"
+        format: "RFC 4122"
+        validation: "regex_pattern"
+
+      timestamp:
+        type: "datetime"
+        format: "ISO 8601"
+        range: "reasonable_range"
+
+      limit:
+        type: "integer"
+        min_value: 1
+        max_value: 100
+        default: 20
+
+      offset:
+        type: "integer"
+        min_value: 0
+        default: 0
+
+  file_uploads:
+    image_files:
+      allowed_types:
+        - "image/jpeg"
+        - "image/png"
+        - "image/gif"
+        - "image/webp"
+
+      max_size: "5MB"
+      dimensions:
+        max_width: 4096
+        max_height: 4096
+
+      content_validation:
+        - "magic_number_verification"
+        - "metadata_sanitization"
+        - "virus_scan"
+
+      storage_security:
+        - "random_filename"
+        - "quarantine_zone"
+        - "access_controls"
+
+validation_layers:
+  layer_1_network:
+    rate_limiting:
+      general: "1000_requests_per_minute"
+      login: "10_requests_per_minute"
+      registration: "5_requests_per_minute"
+      password_reset: "3_requests_per_hour"
+
+    size_limits:
+      headers: "8KB"
+      request_body: "10MB"
+      url_length: "2048_chars"
+
+    protocol_validation:
+      - "HTTP method validation"
+      - "Content-Type verification"
+      - "Content-Length checking"
+
+  layer_2_application:
+    schema_validation:
+      request_bodies: "JSON Schema"
+      query_params: "parameter_schema"
+      headers: "header_schema"
+
+    business_logic:
+      - "User permissions"
+      - "Resource ownership"
+      - "Quota limits"
+      - "Batch size limits"
+
+    context_validation:
+      - "User session validity"
+      - "Request timing"
+      - "Geographic restrictions"
+      - "Device fingerprinting"
+
+  layer_3_data:
+    database_input:
+      - "Parameterized queries"
+      - "Stored procedures"
+      - "ORM escaping"
+      - "Type casting"
+
+    api_calls:
+      - "Input sanitization"
+      - "Request validation"
+      - "Response filtering"
+      - "Error sanitization"
+
+output_encoding:
+  html_context:
+    encoding: "HTML Entity Encoding"
+    contexts:
+      - "HTML content"
+      - "HTML attributes"
+      - "JavaScript"
+      - "CSS"
+      - "URL"
+
+    implementation:
+      - "encodeURIComponent for URLs"
+      - "escapeHTML for content"
+      - "JSON.stringify for JSON"
+      - "CSS.escape for CSS"
+
+  json_responses:
+    serialization:
+      - "Safe JSON parsing"
+      - "Prototype pollution protection"
+      - "Depth limiting"
+      - "Callback validation"
+
+error_handling:
+  validation_errors:
+    response_format: "standardized"
+    message_sanitization: true
+    stack_trace_exposure: false
+
+    error_details:
+      field_errors: true
+      general_errors: true
+      security_errors: false
+
+    logging:
+      level: "WARN"
+      include_input: true
+      include_user: true
+      include_context: true
+
+security_headers:
+  input_validation:
+    - "X-Content-Type-Options: nosniff"
+    - "X-Frame-Options: DENY"
+    - "Content-Security-Policy: default-src 'self'"
+
+  csrf_protection:
+    - "SameSite cookie attribute"
+    - "CSRF token validation"
+    - "Origin header checking"
+    - "Referer validation"
+
+testing_requirements:
+  unit_tests:
+    coverage: ">90%"
+    test_cases:
+      - "valid_inputs"
+      - "invalid_formats"
+      - "boundary_values"
+      - "malicious_inputs"
+      - "encoding_attacks"
+
+  integration_tests:
+    - "API endpoint validation"
+    - "Form submission testing"
+    - "File upload security"
+    - "Rate limiting verification"
+
+  security_tests:
+    - "SQL injection attempts"
+    - "XSS payload testing"
+    - "Command injection"
+    - "Path traversal"
+    - "Buffer overflow"
+
+monitoring:
+  validation_metrics:
+    - "Input rejection rate"
+    - "Validation failure patterns"
+    - "Suspicious input detection"
+    - "Rate limiting triggers"
+
+  alerting:
+    - "Mass validation failures"
+    - "Repeated malicious inputs"
+    - "Unexpected input patterns"
+    - "Validation bypass attempts"
+
+compliance:
+  standards:
+    - "OWASP Input Validation Cheat Sheet"
+    - "OWASP XSS Prevention Cheat Sheet"
+    - "NIST SP 800-53"
+    - "ISO 27001 A.14.2"
+
+  audit_requirements:
+    - "Validation rule documentation"
+    - "Change tracking"
+    - "Compliance verification"
+    - "Incident correlation"
+
+implementation_guidelines:
+  technology_specific:
+    node_express:
+      libraries:
+        - "joi for schema validation"
+        - "express-validator"
+        - "helmet for security headers"
+        - "express-rate-limit"
+
+      configuration:
+        - "Global validation middleware"
+        - "Error handling middleware"
+        - "Logging integration"
+
+    frontend:
+      validation:
+        - "HTML5 form validation"
+        - "JavaScript validation (UX only)"
+        - "Framework-specific validators"
+
+      security:
+        - "Content Security Policy"
+        - "XSS protection"
+        - "Input sanitization"
+
+maintenance:
+  rule_updates:
+    frequency: "quarterly"
+    sources:
+      - "Security advisories"
+      - "Threat intelligence"
+      - "Incident analysis"
+      - "Compliance changes"
+
+  testing_updates:
+    - "New attack patterns"
+    - "Validation edge cases"
+    - "Performance optimization"
+    - " usability improvements"
